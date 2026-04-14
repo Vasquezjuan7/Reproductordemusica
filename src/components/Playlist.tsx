@@ -49,7 +49,7 @@ export const Playlist: React.FC = () => {
           
           return (
             <div 
-              key={track.id + index}
+              key={track.id}
               draggable
               onDragStart={(e) => {
                 setDraggedIndex(index);

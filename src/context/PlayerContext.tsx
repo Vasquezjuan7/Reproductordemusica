@@ -28,7 +28,7 @@ interface PlayerContextType {
   setVibe: (v: 'bars' | 'rays' | 'storm' | 'orb') => void;
   toggleBassBoost: () => void;
   
-  addTrack: (song: SongData) => void;
+  addTrack: (song: SongData) => boolean;
   removeTrack: (songId: string) => void;
   moveTrackUp: (songId: string) => void;
   moveTrackDown: (songId: string) => void;
@@ -336,13 +336,30 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setActivePlaylistId(id);
   };
 
-  const addTrack = (song: SongData) => {
+  const isTrackDuplicate = (fileName: string): boolean => {
+    const activeList = playlists.find(p => p.id === activePlaylistId)?.list;
+    if (!activeList) return false;
+    let current = activeList.head;
+    while (current) {
+      if (current.song.fileName === fileName) return true;
+      current = current.next;
+    }
+    return false;
+  };
+
+  const addTrack = (song: SongData): boolean => {
     const activeList = playlists.find(p => p.id === activePlaylistId)?.list;
     if (activeList) {
+      // Reject duplicate by fileName
+      if (song.fileName && isTrackDuplicate(song.fileName)) {
+        return false;
+      }
       activeList.addTrackEnd(song);
-      setPlaylists([...playlists]); // Immutable update triggers React re-render
+      setPlaylists([...playlists]);
       forceUpdate();
+      return true;
     }
+    return false;
   };
 
   const removeTrack = (songId: string) => {

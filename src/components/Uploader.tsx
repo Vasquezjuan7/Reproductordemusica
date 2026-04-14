@@ -38,6 +38,7 @@ export const Uploader: React.FC = () => {
     const files = e.target.files;
     if (!files) return;
     setIsProcessing(true);
+    let duplicateCount = 0;
 
     for (const file of Array.from(files)) {
       const isAudio = file.type.startsWith('audio/');
@@ -45,13 +46,15 @@ export const Uploader: React.FC = () => {
 
       if (isVideo) {
         const objectUrl = URL.createObjectURL(file);
-        addTrack({
+        const added = addTrack({
           id: crypto.randomUUID(),
           title: file.name.replace(/\.[^/.]+$/, ''),
           artist: 'Unknown Artist',
           audioSrc: objectUrl,
           videoSrc: objectUrl,
+          fileName: file.name,
         });
+        if (!added) duplicateCount++;
         continue;
       }
 
@@ -148,7 +151,8 @@ export const Uploader: React.FC = () => {
         if (!title) title = file.name.replace(/\.[^/.]+$/, '');
 
         console.log(`[Aura] ✅ "${artist} - ${title}" (confidence: ${confidence})`);
-        addTrack({ id: crypto.randomUUID(), title, artist, audioSrc: objectUrl, coverArt });
+        const added = addTrack({ id: crypto.randomUUID(), title, artist, audioSrc: objectUrl, coverArt, fileName: file.name });
+        if (!added) duplicateCount++;
       } catch (err) {
         console.error(`[Aura] Error fatal procesando "${file.name}":`, err);
         // Fallback de emergencia si el archivo rompe algo interno
@@ -157,11 +161,17 @@ export const Uploader: React.FC = () => {
           title: file.name.replace(/\.[^/.]+$/, ''),
           artist: 'Unknown Artist',
           audioSrc: URL.createObjectURL(file),
+          fileName: file.name,
         });
       }
     }
 
-    setStatus('');
+    if (duplicateCount > 0) {
+      setStatus(`⚠️ ${duplicateCount} canción${duplicateCount > 1 ? 'es' : ''} ya estaba${duplicateCount > 1 ? 'n' : ''} en la lista y se omitió${duplicateCount > 1 ? 'eron' : ''}.`);
+      setTimeout(() => setStatus(''), 3500);
+    } else {
+      setStatus('');
+    }
     setIsProcessing(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -177,8 +187,8 @@ export const Uploader: React.FC = () => {
       >
         {isProcessing ? 'Procesando…' : 'Subir canciones o videos (MP3/MP4)'}
       </button>
-      {isProcessing && status && (
-        <p className="text-xs text-text-muted animate-pulse text-center max-w-xs">{status}</p>
+      {status && (
+        <p className={`text-xs animate-pulse text-center max-w-xs ${status.startsWith('⚠️') ? 'text-yellow-400' : 'text-text-muted'}`}>{status}</p>
       )}
     </div>
   );

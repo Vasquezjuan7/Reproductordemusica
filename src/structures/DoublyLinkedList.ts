@@ -7,6 +7,7 @@ export interface SongData {
   videoSrc?: string;
   duration?: number;
   lyrics?: string;
+  fileName?: string; // original filename for duplicate detection
 }
 
 export class SongNode {
@@ -135,7 +136,7 @@ export class DoublyLinkedList {
       this.currentTrack = this.currentTrack.next;
       return this.currentTrack;
     }
-    return this.currentTrack; // Alternatively return null if looping isn't enabled
+    return null;
   }
 
   public prevTrack(): SongNode | null {
