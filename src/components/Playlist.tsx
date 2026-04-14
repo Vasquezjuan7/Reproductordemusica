@@ -1,9 +1,9 @@
 import React from 'react';
 import { usePlayer } from '../context/PlayerContext';
-import { Music, Play, Trash2, Disc3, ChevronUp, ChevronDown, Video, VideoOff } from 'lucide-react';
+import { Play, Trash2, Disc3, ChevronUp, ChevronDown, Video, VideoOff } from 'lucide-react';
 
 export const Playlist: React.FC = () => {
-  const { playlists, activePlaylistId, currentTrack, playingPlaylistId, playSpecificTrack, removeTrack, moveTrackUp, moveTrackDown, isPlaying, triggerUpdate, updateTrackVideo, reorderTrack } = usePlayer();
+  const { playlists, activePlaylistId, currentTrack, playingPlaylistId, playSpecificTrack, removeTrack, moveTrackUp, moveTrackDown, isPlaying, updateTrackVideo, reorderTrack } = usePlayer();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [updatingSongId, setUpdatingSongId] = React.useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);

@@ -36,7 +36,7 @@ class Ray {
     if (this.x > width + 200) this.x = -200;
     if (this.x < -200) this.x = width + 200;
   }
-  draw(ctx: CanvasRenderingContext2D, width: number, height: number, intensity: number, isDark: boolean, time: number) {
+  draw(ctx: CanvasRenderingContext2D, _width: number, height: number, intensity: number, isDark: boolean, time: number) {
     const alpha = (isDark ? 0.7 : 0.5) * intensity;
     if (alpha <= 0.05) return;
     
@@ -97,9 +97,9 @@ class RainDrop {
 export const Visualizer: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { isPlaying, vibe, analyser, currentTrack, triggerUpdate, isBassBoost, dominantColor } = usePlayer();
-  const animationRef = useRef<number>();
-  const dataArrayRef = useRef<Uint8Array>(new Uint8Array(0));
+  const { isPlaying, vibe, analyser, currentTrack, triggerUpdate, dominantColor } = usePlayer();
+  const animationRef = useRef<number>(0);
+  const dataArrayRef = useRef<Uint8Array<ArrayBuffer>>(new Uint8Array(0) as Uint8Array<ArrayBuffer>);
   const videoScaleRef = useRef<number>(1);
   
   // Refs for persistent objects in different modes
@@ -107,7 +107,6 @@ export const Visualizer: React.FC = () => {
   const rays = useRef<Ray[]>([]);
   const rainDrops = useRef<RainDrop[]>([]);
   const lastStrike = useRef<number>(0);
-  const orbParticles = useRef<any[]>([]);
 
   // Video Sync Effect
   useEffect(() => {
@@ -178,7 +177,7 @@ export const Visualizer: React.FC = () => {
 
       // Self-healing dataArray: Ensure it's the correct size
       if (dataArrayRef.current.length !== analyser.frequencyBinCount) {
-        dataArrayRef.current = new Uint8Array(analyser.frequencyBinCount);
+        dataArrayRef.current = new Uint8Array(analyser.frequencyBinCount) as Uint8Array<ArrayBuffer>;
       }
       
       const dataArray = dataArrayRef.current;
@@ -187,7 +186,6 @@ export const Visualizer: React.FC = () => {
 
       const isDark = document.documentElement.classList.contains('dark');
       const bass = Array.from(dataArray.slice(0, 5)).reduce((a,b)=>a+b,0) / 5;
-      const mid = Array.from(dataArray.slice(10, 40)).reduce((a,b)=>a+b,0) / 30;
       const treble = Array.from(dataArray.slice(100, 120)).reduce((a,b)=>a+b,0) / 20;
       const intensity = isPlaying ? (bass/255) : 0;
       

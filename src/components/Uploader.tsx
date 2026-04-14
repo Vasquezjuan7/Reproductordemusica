@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { usePlayer } from '../context/PlayerContext';
 import * as jsmediatags from 'jsmediatags';
-import { fetchiTunesMetadata, fetchLRCLIBLyrics, cleanFilenameForSearch } from '../utils/onlineMetadata';
+import { fetchiTunesMetadata, cleanFilenameForSearch } from '../utils/onlineMetadata';
 
 export const Uploader: React.FC = () => {
   const { addTrack } = usePlayer();
@@ -62,7 +62,6 @@ export const Uploader: React.FC = () => {
         let title = '';
         let artist = 'Unknown Artist';
         let coverArt: string | undefined;
-        let lyrics: string | undefined;
 
         // Nivel de confianza:
         // 3 = ID3 tags completos  → NO tocar title/artist, solo buscar portada
@@ -80,8 +79,8 @@ export const Uploader: React.FC = () => {
         if (tags) {
           if (tags.title)  title  = tags.title;
           if (tags.artist) artist = tags.artist;
-          if (tags.lyrics?.lyrics) lyrics = tags.lyrics.lyrics;
-          else if (tags.USLT) lyrics = typeof tags.USLT === 'string' ? tags.USLT : (tags.USLT as any)?.text;
+          if (tags.lyrics?.lyrics) { /* lyrics stored in ID3 */ }
+          else if (tags.USLT) { /* USLT lyrics stored in ID3 */ }
 
           if (tags.picture) {
             try {

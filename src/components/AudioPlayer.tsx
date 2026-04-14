@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { usePlayer } from '../context/PlayerContext';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Mic2, Shuffle, Repeat, Repeat1, Gauge } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Shuffle, Repeat, Repeat1, Gauge } from 'lucide-react';
 
 const formatTime = (time: number) => {
   if (isNaN(time)) return "0:00";
@@ -21,8 +21,6 @@ export const AudioPlayer: React.FC = () => {
     seek,
     volume,
     setVolume,
-    toggleLyrics,
-    isLyricsOpen,
     isShuffle,
     toggleShuffle,
     repeatMode,
@@ -33,7 +31,7 @@ export const AudioPlayer: React.FC = () => {
   } = usePlayer();
 
   const [showPlayer, setShowPlayer] = React.useState(true);
-  const hideTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const hideTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!isCinemaMode) {

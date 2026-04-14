@@ -38,6 +38,7 @@ interface PlayerContextType {
   playNext: () => void;
   playPrev: () => void;
   togglePlay: () => void;
+  seek: (time: number) => void;
   setVolume: (v: number) => void;
   updateTrackVideo: (songId: string, videoSrc: string) => void;
   

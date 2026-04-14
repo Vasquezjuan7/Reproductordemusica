@@ -8,4 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    rollupOptions: {
+      external: ['react-native-fs', 'fs', 'buffer'],
+    },
+  },
 })
+
